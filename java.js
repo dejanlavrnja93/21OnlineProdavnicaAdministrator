@@ -7,14 +7,29 @@ class Artikal {
   }
 }
 
-// 2. Pravimо niz početnih artikala pomoću klase Artikal.
-const artikli = [
-  new Artikal("Monitor", 165, "Računarski monitor"),
-  new Artikal("TV", 650, "Televizor"),
-  new Artikal("Miš", 20, "Računarski miš"),
-];
+const KLJUC_SKLADISTA = "artikli";
 
-// 3. Pronalazimo elemente iz HTML-a koje ćemo koristiti.
+// Učitavamo sačuvane artikle i ponovo ih pretvaramo u objekte klase Artikal.
+function ucitajArtikle() {
+  try {
+    const sacuvaniPodaci = JSON.parse(
+      localStorage.getItem(KLJUC_SKLADISTA) || "[]"
+    );
+
+    if (!Array.isArray(sacuvaniPodaci)) {
+      return [];
+    }
+
+    return sacuvaniPodaci.map(
+      (artikal) => new Artikal(artikal.naziv, artikal.cena, artikal.opis)
+    );
+  } catch (greska) {
+    console.error("Artikli nisu mogli biti učitani:", greska);
+    return [];
+  }
+}
+
+const artikli = ucitajArtikle();
 const teloTabele = document.querySelector("tbody");
 const forma = document.querySelector("form");
 
@@ -41,7 +56,7 @@ function dodajRedUTabelu(artikal, redniBroj) {
   teloTabele.appendChild(red);
 }
 
-// 6. Prikazujemo početne artikle u tabeli.
+// 6. Prikazujemo artikle učitane iz localStorage.
 for (let indeks = 0; indeks < artikli.length; indeks++) {
   dodajRedUTabelu(artikli[indeks], indeks + 1);
 }
@@ -57,8 +72,10 @@ forma.addEventListener("submit", (event) => {
 
   const noviArtikal = new Artikal(naziv, cena, opis);
   artikli.push(noviArtikal);
-  dodajRedUTabelu(noviArtikal, artikli.length);
 
-  // Praznimo polja forme nakon dodavanja artikla.
+  // Čuvamo ažuriran niz artikala u localStorage.
+  localStorage.setItem(KLJUC_SKLADISTA, JSON.stringify(artikli));
+
+  dodajRedUTabelu(noviArtikal, artikli.length);
   forma.reset();
 });
