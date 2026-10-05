@@ -9,7 +9,7 @@ class Artikal {
 const artikli = [
   new Artikal("Monitor", 165, "Računarski monitor"),
   new Artikal("TV", 650, "Televizor"),
-  new Artikal("Miš", 20, "Računarski miš")
+  new Artikal("Miš", 20, "Računarski miš"),
 ];
 
 const teloTabele = document.querySelector("tbody");
@@ -23,5 +23,10 @@ artikli.forEach((artikal, indeks) => {
     red.appendChild(celija);
   });
 
+  red.addEventListener("click", () => {
+    document.querySelector("#detaljiNaziv").textContent = artikal.naziv;
+    document.querySelector("#detaljiCena").textContent = artikal.cena;
+    document.querySelector("#detaljiOpis").textContent = artikal.opis;
+  });
   teloTabele.appendChild(red);
 });
